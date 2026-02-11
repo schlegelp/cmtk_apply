@@ -134,9 +134,13 @@ The matrix composition follows CMTK's post-2.4.0 convention. Legacy (<2.4.0) beh
 ### B-spline Basis
 
 The cubic B-spline basis functions for parameter *t* ∈ [0,1] are:
+
 $$w_0(t) = \frac{(1 - 3t + 3t^2 - t^3)}{6}$$
+
 $$w_1(t) = \frac{(4 - 6t^2 + 3t^3)}{6}$$
+
 $$w_2(t) = \frac{(1 + 3t + 3t^2 - 3t^3)}{6}$$
+
 $$w_3(t) = \frac{t^3}{6}$$
 
 A 4×4×4 neighborhood of control points is evaluated for each query point using tensor products of these weights.
