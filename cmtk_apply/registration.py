@@ -35,7 +35,7 @@ class Registration:
         self,
         points: Iterable[Iterable[float]],
         transform: str = "warp",
-        allow_extrapolation: bool = False,
+        allow_extrapolation: bool = True,
         fallback_to_affine: bool = True,
     ) -> np.ndarray:
         """Apply the registration transform to input points.
@@ -78,7 +78,7 @@ class Registration:
         initial_guess: Optional[np.ndarray] = None,
         max_iter: int = 15,
         tolerance: float = 1e-6,
-        allow_extrapolation: bool = False,
+        allow_extrapolation: bool = True,
         solver: str = "auto",
     ) -> np.ndarray:
         """Solve for input points given output (transformed) points.
@@ -137,7 +137,7 @@ class RegistrationChain:
         self,
         points: Iterable[Iterable[float]],
         transform: str = "warp",
-        allow_extrapolation: bool = False,
+        allow_extrapolation: bool = True,
         fallback_to_affine: bool = True,
     ) -> np.ndarray:
         """Apply all registrations in sequence.
@@ -172,7 +172,7 @@ class RegistrationChain:
         initial_guess: Optional[np.ndarray] = None,
         max_iter: int = 15,
         tolerance: float = 1e-6,
-        allow_extrapolation: bool = False,
+        allow_extrapolation: bool = True,
         solver: str = "auto",
     ) -> np.ndarray:
         """Invert all registrations in reverse sequence.

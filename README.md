@@ -70,7 +70,7 @@ Apply the registration transformation to points.
 output = reg.transform_points(
     points,                      # N×3 array-like of 3D points
     transform="warp",            # "warp" (default) or "affine"
-    allow_extrapolation=False,   # Allow evaluation outside spline grid
+    allow_extrapolation=True,   # Allow evaluation outside spline grid
     fallback_to_affine=True,     # Use affine if spline fails
 )
 ```
@@ -91,7 +91,7 @@ Apply the inverse transformation to points.
 output = reg.inverse_transform_points(
     points,                      # N×3 array-like of 3D points
     transform="warp",            # "warp" (default) or "affine"
-    allow_extrapolation=False,   # Allow evaluation outside spline grid
+    allow_extrapolation=True,   # Allow evaluation outside spline grid
     fallback_to_affine=True,     # Use affine if spline fails
     solver="auto",               # "auto" (default), "analytical" or "numerical"
 )
