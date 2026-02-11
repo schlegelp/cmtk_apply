@@ -5,11 +5,15 @@ import numpy as np
 import pytest
 
 from cmtk_apply import load_registration
+from cmtk_apply.utils import find_streamxform
 
 
-STREAMXFORM = "/opt/local/lib/cmtk/bin/streamxform"
+STREAMXFORM = find_streamxform()
 REG_PATH = os.path.join(os.path.dirname(__file__), "..", "JFRC2_FCWB.list")
 
+if not STREAMXFORM:
+    # Note: this message is only visible of user runs `pytest` with `-s` option
+    print("Warning: streamxform binary not found. Using precomputed results.")
 
 def _run_streamxform(points, affine_only=False, inverse=False):
     if not os.path.exists(STREAMXFORM):
