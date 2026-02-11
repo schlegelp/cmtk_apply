@@ -6,13 +6,15 @@ Thanks to the use of `numba`, we are on par for inverse transforms and ~2x faste
 
 ## Installation
 
-### From source
+### From Github
 
 ```bash
-pip install -e .
+pip install git+https://github.com/schlegelp/cmtk_apply
 ```
 
-### With development dependencies
+### From source with development dependencies
+
+Clone the repository and run:
 
 ```bash
 pip install -e ".[dev]"
