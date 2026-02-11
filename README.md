@@ -8,6 +8,12 @@ Thanks to the use of `numba`, we are on par for inverse transforms and ~2x faste
 
 ## Installation
 
+### From PyPI
+
+```bash
+pip install cmtk-apply
+```
+
 ### From Github
 
 ```bash
