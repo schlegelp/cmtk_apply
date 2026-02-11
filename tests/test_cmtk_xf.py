@@ -15,9 +15,56 @@ if not STREAMXFORM:
     # Note: this message is only visible of user runs `pytest` with `-s` option
     print("Warning: streamxform binary not found. Using precomputed results.")
 
+
+def _precompute_results():
+    """Precompute results for fallback if streamxform is not available."""
+    points = _sample_points()
+    results = {}
+
+    # Affine forward
+    results["affine_forward"] = _run_streamxform(
+        points, affine_only=True, inverse=False
+    )
+
+    # Affine inverse
+    results["affine_inverse"] = _run_streamxform(points, affine_only=True, inverse=True)
+
+    # Warp forward
+    results["warp_forward"] = _run_streamxform(points, affine_only=False, inverse=False)
+
+    # Warp inverse
+    results["warp_inverse"] = _run_streamxform(points, affine_only=False, inverse=True)
+
+    np.savez_compressed(
+        os.path.join(os.path.dirname(__file__), "precomputed_results.npz"), **results
+    )
+    return results
+
+
+def _load_precomputed_results():
+    """Load precomputed results from file."""
+    file = os.path.join(os.path.dirname(__file__), "precomputed_results.npz")
+    if os.path.exists(file):
+        data = np.load(file)
+        return {key: data[key] for key in data.files}
+    else:
+        raise FileNotFoundError(
+            "Precomputed results not found. Run _precompute_results() to generate them."
+        )
+
+
 def _run_streamxform(points, affine_only=False, inverse=False):
-    if not os.path.exists(STREAMXFORM):
-        pytest.skip(f"streamxform not found at {STREAMXFORM}")
+    """Run streamxform or return precomputed results as fallback."""
+    if not STREAMXFORM:
+        precomputed_results = _load_precomputed_results()
+        # If possible return precomputed results instead of skipping
+        key = f"{'affine' if affine_only else 'warp'}_{'inverse' if inverse else 'forward'}"
+        if key in precomputed_results:
+            return precomputed_results[key].copy()
+        else:
+            pytest.skip(
+                f"streamxform not found at {STREAMXFORM} and no precomputed results for {key}"
+            )
 
     reg_path = os.path.abspath(REG_PATH)
     args = [STREAMXFORM]
@@ -124,7 +171,9 @@ def test_warp_inverse_roundtrip():
     transformed = reg.transform_points(points, transform="warp")
 
     # Inverse transform
-    recovered = reg.inverse_transform_points(transformed, transform="warp", max_iter=100, tolerance=1e-8)
+    recovered = reg.inverse_transform_points(
+        transformed, transform="warp", max_iter=100, tolerance=1e-8
+    )
 
     # Should recover original points (within iterative solver tolerance)
     # The solver tolerance is tighter, so we use a slightly looser tolerance here
@@ -146,21 +195,14 @@ def test_warp_inverse_matches_streamxform():
 
     # Get inverse from our library (use expected as initial guess for stability)
     got = reg.inverse_transform_points(
-        points,
-        transform="warp",
-        initial_guess=expected,
-        max_iter=100,
-        tolerance=1e-8
+        points, transform="warp", initial_guess=expected, max_iter=100, tolerance=1e-8
     )
 
     # Compare only points where streamxform succeeded (not NaN)
     valid_mask = ~np.isnan(expected[:, 0])
     if np.any(valid_mask):
         np.testing.assert_allclose(
-            got[valid_mask],
-            expected[valid_mask],
-            atol=1e-3,
-            rtol=1e-4
+            got[valid_mask], expected[valid_mask], atol=1e-3, rtol=1e-4
         )
 
 
@@ -183,7 +225,9 @@ def test_warp_forward_inverse_consistency():
 
     # Forward then inverse
     forward = reg.transform_points(points, transform="warp")
-    back = reg.inverse_transform_points(forward, transform="warp", max_iter=100, tolerance=1e-8)
+    back = reg.inverse_transform_points(
+        forward, transform="warp", max_iter=100, tolerance=1e-8
+    )
 
     # Should be consistent (iterative solver tolerance)
     np.testing.assert_allclose(back, points, atol=1e-3, rtol=1e-4)
@@ -246,13 +290,8 @@ def test_chain_warp_inverse_roundtrip():
     # Forward then inverse with initial guess
     forward = chain.transform_points(points, transform="warp")
     inverted = chain.inverse_transform_points(
-        forward,
-        transform="warp",
-        initial_guess=points,
-        max_iter=100,
-        tolerance=1e-8
+        forward, transform="warp", initial_guess=points, max_iter=100, tolerance=1e-8
     )
 
     # Should recover original points
     np.testing.assert_allclose(inverted, points, atol=1e-3, rtol=1e-4)
-
