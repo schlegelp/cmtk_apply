@@ -1,5 +1,7 @@
 # cmtk-apply
 
+[![Tests](https://github.com/schlegelp/cmtk_apply/actions/workflows/tests.yml/badge.svg)](https://github.com/schlegelp/cmtk_apply/actions/workflows/tests.yml)
+
 Fast, accurate and user-friendly Python interface for applying [CMTK (Computational Morphometry Toolkit)](https://www.nitrc.org/projects/cmtk) transformations, without requiring subprocess calls to external command-line tools.
 
 Thanks to the use of `numba`, we are on par for inverse transforms and ~2x faster for forward transforms compared to CMTK's `streamxform` tool. For smaller point sets the speed-up is even more dramatic due to eliminating overhead from process startup and file I/O. See [BENCHMARK_RESULTS.md](.benchmarks/BENCHMARK_RESULTS.md) for details.
