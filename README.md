@@ -46,7 +46,7 @@ inverse = reg.inverse_transform_points(forward)
 print(inverse)
 ```
 
-## Optional Fastmath
+### Optional Fastmath
 
 Enable fastmath for Numba kernels by setting the environment variable:
 
@@ -153,18 +153,18 @@ Run tests with pytest:
 pytest tests/
 ```
 
-To compare against CMTK's `streamxform` tool (if available):
+To compare against CMTK's `streamxform` tool:
 
 ```bash
 pytest -v tests/test_cmtk_xf.py::test_affine_matches_streamxform
 pytest -v tests/test_cmtk_xf.py::test_warp_matches_streamxform
 ```
 
-Tests skip automatically if `streamxform` is not in the expected location.
+Tests automatically use precomputed results if `streamxform` is not found, so they can be run in any environment.
 
 ## Example: JFRC2 to FCWB Registration
 
-The `JFRC2_FCWB.list/` folder contains a pre-computed registration from the Drosophila reference brain JFRC2 to the FCWB template. This registration includes:
+The `JFRC2_FCWB.list/` folder contains a pre-computed registration from the *Drosophila* reference brain JFRC2 to the FCWB template. This registration includes:
 - An affine component (12 DOF)
 - A 59×27×11 B-spline warp grid with deformation coefficients
 
@@ -203,7 +203,7 @@ registration {
 
 - [CMTK on NITRC](https://www.nitrc.org/projects/cmtk/)
 - [nat (R package) CMTK I/O](https://github.com/natverse/nat/blob/HEAD/R/cmtk_io.R)
-- [Drosophila brain templates (JFRC2, FCWB)](https://github.com/jefferislab/BridgingRegistrations)
+- [Example registration (JFRC2 -> FCWB)](https://github.com/jefferislab/BridgingRegistrations)
 
 ## License
 
